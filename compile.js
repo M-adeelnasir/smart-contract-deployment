@@ -27,15 +27,22 @@ function compileContract() {
             }
         }
     };
-    console.log('compiling contract');
-    let compiledContract = JSON.parse(solc.compile(JSON.stringify(complierInput)));
+    console.log('compiling contract.....');
+    // parses solidity to English and strings 
+    var output = JSON.parse(solc.compile(JSON.stringify(complierInput)));
     console.log('Contract Compiled');
-    for (let contractName in compiledContract.contracts['Inbox.sol']) {
-        console.log(contractName, compiledContract.contracts['Inbox.sol'][contractName].abi);
-        let abi = compiledContract.contracts['Inbox.sol'][contractName].abi;
-        fs.writeFileSync(`./contracts/bin/${contractName}_abi.json`, JSON.stringify(abi));
-        return compiledContract.contracts['Inbox.sol'][contractName];
-    }
+
+
+    var outputContracts = output.contracts['Inbox.sol']['inbox']
+
+    // exports ABI interface
+    module.exports.abi = outputContracts.abi;
+
+    // // exports bytecode from smart contract
+    module.exports.bytecode = outputContracts.evm.bytecode.object;
+
+
+
 }
 
 compileContract()
